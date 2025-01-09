@@ -104,6 +104,10 @@ docker = "^7.1.0"
 # This pakege provides a mocker fixture which is a thin-wrapper around the patching API provided by the mock package
 pytest-mock = "^3.14.0"
 invocations = "^3.3.0"
+langchain = "^0.3.14"
+yandexcloud = "^0.330.0"
+tensorflow = "^2.18.0"
+langchain-community = "^0.3.14"
 
 [tool.poetry.group.dev.dependencies]
 # The Django Debug Toolbar is a configurable set of panels that display various debug information

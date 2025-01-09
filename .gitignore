@@ -174,3 +174,6 @@ requirements.txt
 /apps/issues/services/processing_solutions/execution_files/*
 !/apps/issues/services/processing_solutions/execution_files/
 !/apps/issues/services/processing_solutions/execution_files/.gitkeep
+
+# YC SE-account credentials
+authorized_key.json
