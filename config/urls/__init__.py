@@ -17,6 +17,14 @@ urlpatterns = [
         "mission-control-center/",
         admin.site.urls,
     ),
+    path(
+        "users/",
+        include(
+            "apps.users.urls",
+            namespace="users",
+        ),
+        name="users",
+    ),
     # Django Health Check url
     # See more details: https://pypi.org/project/django-health-check/
     # Custom checks at lib/health_checks

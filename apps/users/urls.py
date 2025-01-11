@@ -4,26 +4,9 @@ from django.contrib.auth.views import (
 )
 from django.urls import path
 
-from . import views
-
 app_name = "users"
 
 urlpatterns = [
-    path(
-        "profile/<str:username>/",
-        views.ProfileView.as_view(),
-        name="profile",
-    ),
-    path(
-        "update/",
-        views.ProfileUpdateView.as_view(),
-        name="update",
-    ),
-    path(
-        "signup/",
-        views.SignUpView.as_view(),
-        name="signup",
-    ),
     path(
         "logout/",
         LogoutView.as_view(),
@@ -36,10 +19,5 @@ urlpatterns = [
             redirect_authenticated_user=True,
         ),
         name="login",
-    ),
-    path(
-        "leaderboard/",
-        views.LeaderBoardView.as_view(),
-        name="leaderboard",
     ),
 ]

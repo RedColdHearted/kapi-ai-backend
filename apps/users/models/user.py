@@ -1,8 +1,6 @@
 from django.conf import settings
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    PermissionsMixin,
-)
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import UserManager as DjangoUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -13,12 +11,48 @@ from imagekit.processors import ResizeToFill, Transpose
 from apps.core.models import BaseModel
 
 
+class UserManager(DjangoUserManager):
+    """Adjusted user manager that works w/o `username` field."""
+
+    def _create_user(
+        self,
+        email: str,
+        password: str | None,
+        **extra_fields,
+    ) -> "User":
+        """Create and save a user with the given email and password."""
+        if not email:
+            raise ValueError("The given email must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(
+        self,
+        email: str,
+        password: str | None = None,
+        **extra_fields,
+    ) -> "User":
+        """Create superuser instance (used by `createsuperuser` cmd)."""
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
+
+        return self._create_user(email, password, **extra_fields)
+
+
 class User(
     BaseModel,
     AbstractBaseUser,
     PermissionsMixin,
 ):
-    """Custom user model."""
+    """Custom user model without username."""
 
     username = models.CharField(
         unique=True,
@@ -54,6 +88,7 @@ class User(
             "Designates whether this user should be treated as active.",
         ),
     )
+
     avatar = imagekitmodels.ProcessedImageField(
         verbose_name=_("Avatar"),
         blank=True,
@@ -74,11 +109,13 @@ class User(
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+    REQUIRED_FIELDS = []
+
+    objects = UserManager()
 
     class Meta:
         verbose_name = _("User")
         verbose_name_plural = _("Users")
 
     def __str__(self) -> str:
-        return self.username
+        return self.email

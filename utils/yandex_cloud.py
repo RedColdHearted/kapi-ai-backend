@@ -33,9 +33,9 @@ class JWTPayload:
     exp: float
 
 
-def _read_credentials() -> SEAccountCredentials:
+def _read_credentials(file_path: pathlib.Path) -> SEAccountCredentials:
     """Read and return se-account keys from json file."""
-    with YC_SE_ACCOUNT_CREDENTIALS.open() as credentials_file:
+    with file_path.open() as credentials_file:
         obj = json.load(credentials_file)
         return SEAccountCredentials(
             private_key=obj["private_key"],
@@ -60,7 +60,7 @@ def get_yc_iam_token() -> pydantic.SecretStr:
     service account stored in json file.
 
     """
-    credentials = _read_credentials()
+    credentials = _read_credentials(YC_SE_ACCOUNT_CREDENTIALS)
     payload = _create_payload(credentials.service_account_id)
 
     response = requests.post(
